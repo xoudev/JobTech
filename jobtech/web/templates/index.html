@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobTech — Offres IT en Île-de-France</title>
+  <style>
+    :root { --bg:#0f1117; --card:#1a1d29; --muted:#8b90a0; --txt:#e6e8ef; --accent:#5b8cff; --line:#262a3a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+           background:var(--bg); color:var(--txt); line-height:1.5; }
+    header { padding:24px 20px; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:1.5rem; }
+    h1 span { color:var(--accent); }
+    .sub { color:var(--muted); font-size:.9rem; margin-top:4px; }
+    .wrap { max-width:900px; margin:0 auto; padding:20px; }
+    form { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+    input[type=text], select { background:var(--card); border:1px solid var(--line);
+           color:var(--txt); padding:10px 12px; border-radius:8px; font-size:.95rem; }
+    input[type=text] { flex:1; min-width:200px; }
+    label.chk { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:.9rem; }
+    button { background:var(--accent); border:0; color:#fff; padding:10px 18px;
+             border-radius:8px; font-weight:600; cursor:pointer; }
+    .count { color:var(--muted); font-size:.85rem; margin-bottom:14px; }
+    .job { background:var(--card); border:1px solid var(--line); border-radius:12px;
+           padding:16px 18px; margin-bottom:12px; }
+    .job h2 { margin:0 0 4px; font-size:1.05rem; }
+    .job h2 a { color:var(--txt); text-decoration:none; }
+    .job h2 a:hover { color:var(--accent); }
+    .meta { color:var(--muted); font-size:.85rem; display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
+    .desc { color:#c2c6d4; font-size:.9rem; }
+    .badges { margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
+    .badge { background:#222637; color:#aab; font-size:.72rem; padding:3px 9px; border-radius:99px; }
+    .badge.src { background:#1f2b4d; color:#9db8ff; }
+    .empty { color:var(--muted); text-align:center; padding:60px 0; }
+    a.link { color:var(--accent); text-decoration:none; font-size:.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap" style="padding-top:0;padding-bottom:0;">
+      <h1>Job<span>Tech</span></h1>
+      <div class="sub">Offres informatiques en Île-de-France &middot;
+        {{ stats.total }} offres &middot; sources : {{ stats.by_source|length }}</div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <form method="get" action="/">
+      <input type="text" name="q" value="{{ q }}" placeholder="Mots-clés : python, data, devops…">
+      <select name="dept">
+        <option value="">Tous les départements</option>
+        {% for code, nom in departments.items() %}
+          <option value="{{ code }}" {% if dept == code %}selected{% endif %}>{{ code }} — {{ nom }}</option>
+        {% endfor %}
+      </select>
+      <select name="source">
+        <option value="">Toutes les sources</option>
+        {% for s in sources %}
+          <option value="{{ s }}" {% if source == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <label class="chk"><input type="checkbox" name="remote" {% if remote == "on" %}checked{% endif %}> Télétravail</label>
+      <button type="submit">Rechercher</button>
+    </form>
+
+    <div class="count">{{ jobs|length }} résultat(s) affiché(s)</div>
+
+    {% for job in jobs %}
+      <div class="job">
+        <h2><a href="{{ job.url }}" target="_blank" rel="noopener">{{ job.title }}</a></h2>
+        <div class="meta">
+          {% if job.company %}<span>🏢 {{ job.company }}</span>{% endif %}
+          {% if job.location %}<span>📍 {{ job.location }}</span>{% endif %}
+          {% if job.contract_type %}<span>📄 {{ job.contract_type }}</span>{% endif %}
+          {% if job.salary %}<span>💶 {{ job.salary }}</span>{% endif %}
+          {% if job.published_at %}<span>🗓️ {{ job.published_at[:10] }}</span>{% endif %}
+        </div>
+        {% if job.description %}
+          <div class="desc">{{ job.description[:280] }}{% if job.description|length > 280 %}…{% endif %}</div>
+        {% endif %}
+        <div class="badges">
+          <span class="badge src">{{ job.source }}</span>
+          {% if job.remote %}<span class="badge">Télétravail</span>{% endif %}
+          {% for tag in job.tags[:6] %}<span class="badge">{{ tag }}</span>{% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="empty">
+        Aucune offre.<br>
+        Lance une collecte : <code>python -m jobtech collect</code>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
