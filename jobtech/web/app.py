@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -9,13 +10,14 @@ from fastapi.templating import Jinja2Templates
 
 from .. import config, db
 
-app = FastAPI(title="JobTech", description="Offres IT en Île-de-France")
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
-
-
-@app.on_event("startup")
-def _startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     db.init()
+    yield
+
+
+app = FastAPI(title="JobTech", description="Offres IT en Île-de-France", lifespan=lifespan)
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 
 @app.get("/", response_class=HTMLResponse)

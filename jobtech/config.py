@@ -83,6 +83,13 @@ THEMUSE_API_KEY = os.getenv("THEMUSE_API_KEY")
 THEMUSE_MAX_PAGES = int(os.getenv("THEMUSE_MAX_PAGES", "5"))
 
 
+# --- Source : JSON-LD générique (schema.org/JobPosting) ----------------------
+# Liste de pages carrière / job boards (séparées par des virgules) qui embarquent
+# leurs offres en JSON-LD. Un seul connecteur pour potentiellement des centaines
+# de sites. Vide par défaut (connecteur inactif).
+JSONLD_URLS = [u.strip() for u in os.getenv("JSONLD_URLS", "").split(",") if u.strip()]
+
+
 # --- Réseau ------------------------------------------------------------------
 HTTP_TIMEOUT = float(os.getenv("JOBTECH_HTTP_TIMEOUT", "30"))
 USER_AGENT = os.getenv("JOBTECH_USER_AGENT", "JobTech/0.1 (+perso)")

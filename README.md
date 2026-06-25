@@ -25,9 +25,22 @@ Chaque source est un **connecteur** indépendant. Ajouter une nouvelle source =
 | **The Muse** | ❌ non | Marche tout de suite, jobs tech à Paris |
 | **France Travail** | ✅ gratuite | **Source principale** : départements 75–95, métiers IT (ROME M18) |
 | **Adzuna** | ✅ gratuite | Agrégateur mondial, catégorie IT, filtré Île-de-France |
+| **JSON-LD générique** | ❌ (liste d'URLs) | Lit `schema.org/JobPosting` sur n'importe quelle page carrière |
 
 > Sans aucune clé, l'appli tourne déjà avec The Muse. Pour une vraie couverture
-> francilienne, configure **France Travail** (5 min, gratuit).
+> francilienne, configure **France Travail** (5 min, gratuit). Pour élargir à la
+> longue traîne, alimente le connecteur **JSON-LD** avec des URLs (voir `.env.example`).
+
+## Enrichissement automatique
+
+À chaque collecte, chaque offre passe par une étape d'enrichissement hors-ligne
+([`jobtech/enrich.py`](jobtech/enrich.py)) :
+
+- **Stack technique** : détection des technos dans le titre + la description
+  (Python, React, AWS, Kubernetes…) → ajoutées aux `tags`, filtrables ensuite.
+  Volontairement conservateur (ex. « vue » le mot français ≠ Vue.js).
+- **Télétravail** : déduit `remote` à partir de signaux positifs/négatifs
+  (« full remote », « télétravail » vs « présentiel uniquement »).
 
 ---
 
@@ -128,17 +141,27 @@ jobtech/
 ├── config.py            # géographie (IDF), métiers (ROME), clés API
 ├── models.py            # CanonicalJob : le schéma pivot
 ├── dedup.py             # empreinte de déduplication
+├── enrich.py            # extraction stack technique + télétravail
 ├── db.py                # stockage SQLite + recherche FTS5
-├── pipeline.py          # orchestration de la collecte
+├── pipeline.py          # orchestration : collecte → enrichissement → dédup → stockage
 ├── connectors/          # une source = un fichier
 │   ├── base.py          # interface + registre
 │   ├── france_travail.py
 │   ├── adzuna.py
-│   └── themuse.py
+│   ├── themuse.py
+│   └── jsonld.py        # générique schema.org/JobPosting
 ├── web/                 # interface FastAPI
 │   ├── app.py
 │   └── templates/index.html
 └── __main__.py          # CLI : collect / serve / stats
+tests/                   # suite pytest (dédup, enrichissement, db, connecteurs, web)
+```
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -q
 ```
 
 ---
@@ -153,7 +176,7 @@ jobtech/
 ## Pistes d'amélioration
 
 - Déduplication floue (rapidfuzz) plutôt qu'empreinte exacte
-- Connecteur générique `schema.org/JobPosting` (lit n'importe quelle page carrière)
-- Extraction automatique de la stack technique depuis la description
-- Détection fiable du télétravail
+- Connecteur générique JSON-LD piloté par sitemap (découverte auto des pages)
+- Connecteur navigateur (Playwright) pour les sites 100% dynamiques
 - Alertes e-mail / notifications sur nouveaux résultats
+- Pagination et tri (par date, pertinence) dans l'interface web

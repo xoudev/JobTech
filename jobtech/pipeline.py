@@ -6,6 +6,7 @@ import logging
 from . import db
 from .connectors import all_connectors
 from .dedup import fingerprint
+from .enrich import enrich
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ def run_collection() -> dict:
             for job in connector.fetch():
                 if not job.title or not job.url:
                     continue
+                enrich(job)  # tags techno + télétravail
                 job.fingerprint = fingerprint(job)
                 if db.upsert(job):
                     new_count += 1
