@@ -30,7 +30,8 @@
     .meta { color:var(--muted); font-size:.85rem; display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
     .desc { color:#c2c6d4; font-size:.9rem; }
     .badges { margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
-    .badge { background:#222637; color:#aab; font-size:.72rem; padding:3px 9px; border-radius:99px; }
+    .badge { background:#222637; color:#aab; font-size:.72rem; padding:3px 9px; border-radius:99px; text-decoration:none; display:inline-block; }
+    a.badge:hover { filter:brightness(1.5); }
     .badge.src { background:#1f2b4d; color:#9db8ff; }
     .empty { color:var(--muted); text-align:center; padding:60px 0; }
     a.link { color:var(--accent); text-decoration:none; font-size:.85rem; }
@@ -80,9 +81,9 @@
           <div class="desc">{{ job.description[:280] }}{% if job.description|length > 280 %}…{% endif %}</div>
         {% endif %}
         <div class="badges">
-          <span class="badge src">{{ job.source }}</span>
+          <a class="badge src" href="/?source={{ job.source | urlencode }}">{{ job.source }}</a>
           {% if job.remote %}<span class="badge">Télétravail</span>{% endif %}
-          {% for tag in job.tags[:6] %}<span class="badge">{{ tag }}</span>{% endfor %}
+          {% for tag in job.tags[:6] %}<a class="badge" href="/?q={{ tag | urlencode }}">{{ tag }}</a>{% endfor %}
         </div>
       </div>
     {% else %}
