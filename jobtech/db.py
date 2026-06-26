@@ -164,8 +164,13 @@ def search(
     remote: bool | None = None,
     source: str | None = None,
     limit: int = 100,
+    order: str | None = None,
 ) -> list[dict]:
-    """Recherche d'offres. `q` = recherche plein texte ; le reste = filtres exacts."""
+    """Recherche d'offres. `q` = recherche plein texte ; le reste = filtres exacts.
+
+    `order` : "recent" (date décroissante), "company" (A→Z) ou None (par défaut :
+    pertinence si recherche plein texte, sinon date décroissante).
+    """
     conn = connect()
 
     def filters(alias: str = "") -> tuple[list[str], list]:
@@ -181,6 +186,13 @@ def search(
             params.append(source)
         return parts, params
 
+    def order_clause(alias: str = "") -> str:
+        if order == "company":
+            return f"{alias}company COLLATE NOCASE ASC"
+        if order == "recent":
+            return f"{alias}published_at DESC"
+        return ""
+
     if q and HAS_FTS:
         where = ["jobs_fts MATCH ?"]
         params: list = [_fts_query(q)]
@@ -189,7 +201,7 @@ def search(
         params += fparams
         sql = (
             "SELECT j.* FROM jobs_fts f JOIN jobs j ON j.id = f.rowid "
-            "WHERE " + " AND ".join(where) + " ORDER BY f.rank LIMIT ?"
+            "WHERE " + " AND ".join(where) + " ORDER BY " + (order_clause("j.") or "f.rank") + " LIMIT ?"
         )
         params.append(limit)
     elif q:  # repli sans FTS
@@ -199,13 +211,13 @@ def search(
         fparts, fparams = filters("")
         where += fparts
         params += fparams
-        sql = "SELECT * FROM jobs WHERE " + " AND ".join(where) + " ORDER BY published_at DESC LIMIT ?"
+        sql = "SELECT * FROM jobs WHERE " + " AND ".join(where) + " ORDER BY " + (order_clause() or "published_at DESC") + " LIMIT ?"
         params.append(limit)
     else:
         fparts, fparams = filters("")
         where = fparts if fparts else ["1=1"]
         params = list(fparams)
-        sql = "SELECT * FROM jobs WHERE " + " AND ".join(where) + " ORDER BY published_at DESC LIMIT ?"
+        sql = "SELECT * FROM jobs WHERE " + " AND ".join(where) + " ORDER BY " + (order_clause() or "published_at DESC") + " LIMIT ?"
         params.append(limit)
 
     rows = conn.execute(sql, params).fetchall()

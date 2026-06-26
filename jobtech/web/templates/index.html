@@ -5,93 +5,223 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JobTech — Offres IT en Île-de-France</title>
   <style>
-    :root { --bg:#0f1117; --card:#1a1d29; --muted:#8b90a0; --txt:#e6e8ef; --accent:#5b8cff; --line:#262a3a; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-           background:var(--bg); color:var(--txt); line-height:1.5; }
-    header { padding:24px 20px; border-bottom:1px solid var(--line); }
-    h1 { margin:0; font-size:1.5rem; }
-    h1 span { color:var(--accent); }
-    .sub { color:var(--muted); font-size:.9rem; margin-top:4px; }
-    .wrap { max-width:900px; margin:0 auto; padding:20px; }
-    form { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
-    input[type=text], select { background:var(--card); border:1px solid var(--line);
-           color:var(--txt); padding:10px 12px; border-radius:8px; font-size:.95rem; }
-    input[type=text] { flex:1; min-width:200px; }
-    label.chk { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:.9rem; }
-    button { background:var(--accent); border:0; color:#fff; padding:10px 18px;
-             border-radius:8px; font-weight:600; cursor:pointer; }
-    .count { color:var(--muted); font-size:.85rem; margin-bottom:14px; }
-    .job { background:var(--card); border:1px solid var(--line); border-radius:12px;
-           padding:16px 18px; margin-bottom:12px; }
-    .job h2 { margin:0 0 4px; font-size:1.05rem; }
-    .job h2 a { color:var(--txt); text-decoration:none; }
-    .job h2 a:hover { color:var(--accent); }
-    .meta { color:var(--muted); font-size:.85rem; display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; }
-    .desc { color:#c2c6d4; font-size:.9rem; }
-    .badges { margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
-    .badge { background:#222637; color:#aab; font-size:.72rem; padding:3px 9px; border-radius:99px; text-decoration:none; display:inline-block; }
-    a.badge:hover { filter:brightness(1.5); }
-    .badge.src { background:#1f2b4d; color:#9db8ff; }
-    .empty { color:var(--muted); text-align:center; padding:60px 0; }
-    a.link { color:var(--accent); text-decoration:none; font-size:.85rem; }
+    :root{
+      --bg:#0c0d11; --panel:#15171e; --panel-2:#1b1e27; --line:#262a35;
+      --txt:#e7e9f0; --muted:#868d9e; --faint:#5a6072;
+      --accent:#7f81f7; --accent-ink:#aeb0ff;
+      --green:#46d17f; --green-bg:#123524;
+      --purple:#a78bfa; --purple-bg:#241b3f;
+      --amber:#d9a23c; --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--txt);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+    a{color:inherit}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+    /* Barre de navigation */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+    .logo{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+      font-size:.72rem;font-weight:800;color:#fff;
+      background:linear-gradient(135deg,#7f81f7,#a05bf0)}
+    .brand .t{color:var(--accent-ink)}
+    .collect{display:flex;align-items:center;gap:8px;background:var(--panel);
+      border:1px solid var(--line);color:var(--txt);padding:9px 16px;border-radius:10px;
+      font-size:.9rem;font-weight:600;cursor:pointer}
+    .collect:hover{border-color:#3a3f4f}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+      box-shadow:0 0 8px var(--green)}
+
+    /* Héro */
+    .hero{padding:34px 0 22px}
+    .hero h1{margin:0;font-size:2.3rem;font-weight:800;letter-spacing:-.5px}
+    .hero h1 span{color:var(--accent)}
+    .hero p{margin:10px 0 0;color:var(--muted);max-width:680px}
+    .hero b{color:var(--txt);font-weight:600}
+
+    /* Notice collecte */
+    .notice{background:var(--purple-bg);border:1px solid #3a2f63;color:#cbbdf6;
+      padding:10px 14px;border-radius:10px;margin:6px 0 14px;font-size:.9rem}
+
+    /* Panneau de recherche */
+    form.search{background:var(--panel);border:1px solid var(--line);
+      border-radius:var(--radius);padding:14px;margin-bottom:14px}
+    .row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+    .field{position:relative;flex:1;min-width:240px}
+    .field .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint)}
+    input[type=text],select{background:var(--panel-2);border:1px solid var(--line);
+      color:var(--txt);padding:11px 12px;border-radius:10px;font-size:.92rem;width:100%}
+    .field input{padding-left:34px}
+    select{cursor:pointer}
+    .selw{min-width:180px}
+    .chk{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.9rem;
+      background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .chk input{accent-color:var(--accent)}
+    .btn{width:100%;background:var(--accent);border:0;color:#0b0c12;font-weight:700;
+      padding:12px;border-radius:10px;font-size:.95rem;cursor:pointer}
+    .btn:hover{filter:brightness(1.07)}
+
+    /* Chips populaires */
+    .popular{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:4px 2px 26px;
+      color:var(--muted);font-size:.85rem}
+    .chip{background:var(--panel);border:1px solid var(--line);color:var(--accent-ink);
+      padding:5px 11px;border-radius:99px;font-size:.78rem;text-decoration:none}
+    .chip:hover{border-color:var(--accent);background:var(--panel-2)}
+
+    /* En-tête résultats */
+    .rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .rhead .count{font-weight:700}
+    .sort{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem}
+    .sort select{width:auto;padding:7px 10px;font-size:.85rem}
+
+    /* Carte d'offre */
+    .job{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);
+      border-radius:var(--radius);padding:18px;margin-bottom:12px}
+    .job:hover{border-color:#333845}
+    .avatar{width:42px;height:42px;border-radius:10px;flex:0 0 42px;display:grid;
+      place-items:center;font-weight:800;font-size:1.05rem;
+      background:hsl(var(--h),34%,22%);color:hsl(var(--h),65%,72%)}
+    .body{flex:1;min-width:0}
+    .title{margin:0 0 3px;font-size:1.06rem;font-weight:700}
+    .title a{text-decoration:none}
+    .title a:hover{color:var(--accent-ink)}
+    .company{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+    .company b{color:var(--txt);font-weight:600}
+    .badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+    .pill{font-size:.75rem;padding:3px 10px;border-radius:8px;background:var(--panel-2);
+      border:1px solid var(--line);color:var(--txt)}
+    .pill.green{background:var(--green-bg);border-color:#1e5234;color:var(--green)}
+    .pill.purple{background:var(--purple-bg);border-color:#3a2f63;color:var(--purple)}
+    .tags{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{font-size:.72rem;padding:3px 9px;border-radius:7px;border:1px solid var(--line);
+      color:var(--muted);text-decoration:none}
+    .tag:hover{border-color:var(--accent);color:var(--accent-ink)}
+    .aside{flex:0 0 132px;display:flex;flex-direction:column;align-items:flex-end;
+      justify-content:space-between;text-align:right;gap:14px}
+    .src{font-size:.72rem;padding:4px 10px;border-radius:8px;font-weight:600;
+      text-decoration:none;background:#23262f;color:#aeb4c4;border:1px solid var(--line)}
+    .src.france_travail{background:#1e234a;color:#9aa6ff;border-color:#2c3470}
+    .src.adzuna{background:#0f3147;color:#74c0ff;border-color:#15466a}
+    .src.themuse{background:#3a1530;color:#ff8fc4;border-color:#5d2049}
+    .src.jsonld{background:#352a12;color:var(--amber);border-color:#574516}
+    .date{color:var(--faint);font-size:.8rem}
+    .see{color:var(--accent-ink);font-size:.85rem;text-decoration:none;white-space:nowrap}
+    .see:hover{text-decoration:underline}
+
+    .empty{text-align:center;color:var(--muted);padding:70px 20px;
+      background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius)}
+    .empty code{background:var(--panel-2);padding:2px 7px;border-radius:6px;color:var(--accent-ink)}
+    footer{color:var(--faint);font-size:.8rem;text-align:center;padding:30px 0 40px}
+
+    @media(max-width:640px){
+      .hero h1{font-size:1.7rem}
+      .job{flex-wrap:wrap}
+      .aside{flex-basis:100%;flex-direction:row;align-items:center;text-align:left}
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap" style="padding-top:0;padding-bottom:0;">
-      <h1>Job<span>Tech</span></h1>
-      <div class="sub">Offres informatiques en Île-de-France &middot;
-        {{ stats.total }} offres &middot; sources : {{ stats.by_source|length }}</div>
-    </div>
-  </header>
-
   <div class="wrap">
-    <form method="get" action="/">
-      <input type="text" name="q" value="{{ q }}" placeholder="Mots-clés : python, data, devops…">
-      <select name="dept">
-        <option value="">Tous les départements</option>
-        {% for code, nom in departments.items() %}
-          <option value="{{ code }}" {% if dept == code %}selected{% endif %}>{{ code }} — {{ nom }}</option>
-        {% endfor %}
-      </select>
-      <select name="source">
-        <option value="">Toutes les sources</option>
-        {% for s in sources %}
-          <option value="{{ s }}" {% if source == s %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-      </select>
-      <label class="chk"><input type="checkbox" name="remote" {% if remote == "on" %}checked{% endif %}> Télétravail</label>
-      <button type="submit">Rechercher</button>
+    <nav>
+      <div class="brand"><span class="logo">JT</span> <span class="name">Job<span class="t">Tech</span></span></div>
+      <form method="post" action="/collect">
+        <button class="collect" type="submit"><span class="dot"></span> Collecter</button>
+      </form>
+    </nav>
+
+    <section class="hero">
+      <h1>Offres IT en <span>Île-de-France</span></h1>
+      <p>Agrégées et dédoublonnées en continu depuis France Travail, Adzuna, The Muse
+         et les pages carrière. <b class="mono">{{ stats.total }}</b> offres ·
+         <b class="mono">{{ stats.by_source|length }}</b> sources</p>
+    </section>
+
+    {% if collect_started or collecting %}
+      <div class="notice">⏳ Collecte lancée en arrière-plan — rafraîchis la page dans un instant pour voir les nouvelles offres.</div>
+    {% endif %}
+
+    <form class="search" method="get" action="/">
+      <div class="row">
+        <div class="field">
+          <span class="ic">⌕</span>
+          <input type="text" name="q" value="{{ q }}" placeholder="Mots-clés : python, data, devops…">
+        </div>
+        <select class="selw" name="dept">
+          <option value="">Tous départements</option>
+          {% for code, nom in departments.items() %}
+            <option value="{{ code }}" {% if dept == code %}selected{% endif %}>{{ code }} · {{ nom }}</option>
+          {% endfor %}
+        </select>
+        <select class="selw" name="source">
+          <option value="">Toutes sources</option>
+          {% for s in sources %}
+            <option value="{{ s }}" {% if source == s %}selected{% endif %}>{{ source_labels.get(s, s) }}</option>
+          {% endfor %}
+        </select>
+        <label class="chk"><input type="checkbox" name="remote" {% if remote == "on" %}checked{% endif %}> Télétravail</label>
+        <input type="hidden" name="order" value="{{ order }}">
+      </div>
+      <button class="btn" type="submit">Rechercher</button>
     </form>
 
-    <div class="count">{{ jobs|length }} résultat(s) affiché(s)</div>
+    <div class="popular">
+      <span>Populaires :</span>
+      {% for t in popular %}<a class="chip" href="/?q={{ t | urlencode }}">{{ t }}</a>{% endfor %}
+    </div>
+
+    <div class="rhead">
+      <div class="count">{{ jobs|length }} offres</div>
+      <form class="sort" method="get" action="/">
+        <input type="hidden" name="q" value="{{ q }}">
+        <input type="hidden" name="dept" value="{{ dept }}">
+        <input type="hidden" name="source" value="{{ source }}">
+        <input type="hidden" name="remote" value="{{ remote }}">
+        <label for="order">Trier</label>
+        <select id="order" name="order" onchange="this.form.submit()">
+          <option value="recent" {% if order == "recent" %}selected{% endif %}>Plus récentes</option>
+          <option value="company" {% if order == "company" %}selected{% endif %}>Entreprise</option>
+        </select>
+      </form>
+    </div>
 
     {% for job in jobs %}
-      <div class="job">
-        <h2><a href="{{ job.url }}" target="_blank" rel="noopener">{{ job.title }}</a></h2>
-        <div class="meta">
-          {% if job.company %}<span>🏢 {{ job.company }}</span>{% endif %}
-          {% if job.location %}<span>📍 {{ job.location }}</span>{% endif %}
-          {% if job.contract_type %}<span>📄 {{ job.contract_type }}</span>{% endif %}
-          {% if job.salary %}<span>💶 {{ job.salary }}</span>{% endif %}
-          {% if job.published_at %}<span>🗓️ {{ job.published_at[:10] }}</span>{% endif %}
+      <article class="job">
+        <div class="avatar" style="--h:{{ job.avatar_hue }}">{{ job.avatar_initial }}</div>
+        <div class="body">
+          <h2 class="title"><a href="{{ job.url }}" target="_blank" rel="noopener">{{ job.title }}</a></h2>
+          <div class="company">
+            {% if job.company %}<b>{{ job.company }}</b>{% endif %}
+            {% if job.location %} · {{ job.location }}{% endif %}
+          </div>
+          <div class="badges">
+            {% if job.contract_type %}<span class="pill">{{ job.contract_type }}</span>{% endif %}
+            {% if job.salary %}<span class="pill green">{{ job.salary }}</span>{% endif %}
+            {% if job.remote %}<span class="pill purple">Télétravail</span>{% endif %}
+          </div>
+          {% if job.tags %}
+            <div class="tags">
+              {% for t in job.tags[:6] %}<a class="tag" href="/?q={{ t | urlencode }}">{{ t }}</a>{% endfor %}
+            </div>
+          {% endif %}
         </div>
-        {% if job.description %}
-          <div class="desc">{{ job.description[:280] }}{% if job.description|length > 280 %}…{% endif %}</div>
-        {% endif %}
-        <div class="badges">
-          <a class="badge src" href="/?source={{ job.source | urlencode }}">{{ job.source }}</a>
-          {% if job.remote %}<span class="badge">Télétravail</span>{% endif %}
-          {% for tag in job.tags[:6] %}<a class="badge" href="/?q={{ tag | urlencode }}">{{ tag }}</a>{% endfor %}
+        <div class="aside">
+          <a class="src {{ job.source }}" href="/?source={{ job.source | urlencode }}">{{ job.source_label }}</a>
+          <div>
+            {% if job.date_label %}<div class="date">{{ job.date_label }}</div>{% endif %}
+            <a class="see" href="{{ job.url }}" target="_blank" rel="noopener">Voir l'offre →</a>
+          </div>
         </div>
-      </div>
+      </article>
     {% else %}
       <div class="empty">
-        Aucune offre.<br>
-        Lance une collecte : <code>python -m jobtech collect</code>
+        Aucune offre pour l'instant.<br>
+        Clique sur <b>Collecter</b> ou lance <code>python -m jobtech collect</code>.
       </div>
     {% endfor %}
+
+    <footer>JobTech · agrégateur perso d'offres IT — Île-de-France</footer>
   </div>
 </body>
 </html>
